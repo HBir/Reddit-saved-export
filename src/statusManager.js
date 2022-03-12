@@ -8,20 +8,18 @@ let amountFailed = 0;
 
 const isAlreadyProcessed = (url) => {
   if (filesDone[url])  {
-    // console.log(`File already processed, skipping: ${url}`);
     amountSkipped += 1;
     return true;
   }
   if (filesFailed[url]) {
-    // console.log(`File already processed but failed, skipping: ${url}`);
     amountFailed += 1;
     return true;
   }
   return false;
 };
 
-const markAsFailed = (url, filename) => {
-  filesFailed[url] = filename;
+const markAsFailed = (url, filename, reason) => {
+  filesFailed[url] = {filename, reason};
   fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed, null, 2));
 }
 

@@ -33,7 +33,7 @@ const exportSavedRedditPosts = async (type, amount) => {
   console.log(`Handled ${filtered.length} posts`);
 };
 
-const TYPE = 'hosted:video'
-const AMOUNT = 20;
+const TYPE = 'link'
+const AMOUNT = 2;
 
 exportSavedRedditPosts(TYPE, AMOUNT);
