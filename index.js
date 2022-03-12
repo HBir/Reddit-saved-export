@@ -3,13 +3,27 @@ const fs = require('fs');
 const youtubedl = require('youtube-dl-exec');
 
 require('dotenv').config();
-
-const filesDone = require('./files_done.json') || {};
-const filesFailed = require('./files_failed.json') || {};
-
 const {
   userAgent, clientId, clientSecret, username, password,
 } = process.env;
+
+const cache = require('./cache.json') || {};
+
+const {
+  linuxSafeString,
+  getFileExtension,
+  formatPostData,
+} = require('./helpers');
+
+const {
+  isAlreadyProcessed,
+  printAmountSkipped
+} = require('./statusManager')
+
+const {
+  youtubeDlDownload,
+  galleryDlDownloader
+} = require('./downloaders')
 
 const r = new Snoowrap({
   userAgent,
@@ -19,84 +33,47 @@ const r = new Snoowrap({
   password,
 });
 
-const linuxSafeString = (string) => (string || "undefined").replaceAll(/[^a-zA-Z_0-9åäö\\-]/ig, '_');
 
-const getFileExtension = (string) => {
-  // eslint-disable-next-line prefer-regex-literals
-  const regexp = new RegExp('\\/[^\\/]*\\.([^\\.\\/]*)$');
-  return ((string || '').match(regexp) || [])[1] || '';
-};
-
-const markAsComplete = (url, filename) => {
-  filesDone[url] = filename;
-  fs.writeFileSync('files_done.json', JSON.stringify(filesDone));
-};
-
-const formatPostData = (post) => {
-  const fileExtension = getFileExtension(post.url);
-
-  const filename = `${linuxSafeString((post.author || {}).name)}_[`
-    + `${(post.subreddit || {}).display_name}]_`
-    + `${linuxSafeString(post.title)}`
-    + `.${fileExtension}`;
-
-  return {
-    url: post.url,
-    post_hint: linuxSafeString(post.post_hint),
-    filename,
-  };
-};
-
-const downloadFile = async (url, folder, filename) => youtubedl(url, {
-  output: `out/${folder}/${filename}`,
-}).then((output) => {
-  console.log(output);
-  markAsComplete(url, filename);
-})
-  .catch(() => {
-    filesFailed[url] = filename;
-    fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed));
-  });
 
 const handlePost = async (post) => {
-  //if (filesDone[post.url]) {
-  //  console.log(`File already downloaded, skipping: ${post.url}`);
-  //  return '';
-  //}
-
-  const postData = formatPostData(post);
-  console.log('Downloading '+postData.url+" "+postData.filename);
-  //await downloadFile(postData.url, postData.post_hint, postData.filename);
-
-  return postData;
+  const { url, post_hint, filename, extension } = formatPostData(post);
+  await galleryDlDownloader(url, post_hint, filename, extension);
 };
 
-const isAlreadyProcessed = (url) => {
-  if (filesDone[url]) { 
-    console.log(`File already downloaded, skipping: ${url}`);
-    return true;
+const getAllSavedPostWithCache = async () => {
+  if (cache.content) {
+    console.log(`Using cache from ${Date.now() - cache.timestamp} ago. (${cache.content.length} posts)`);
+    return cache.content
   }
-  return false;
+
+  console.log('Fetching content from Reddit...');
+  const freshData = await r.getMe().getSavedContent()
+    .fetchAll({ skipReplies: true })
+
+  console.log(`Recieved ${freshData.length} posts`);
+  fs.writeFileSync('cache.json', JSON.stringify({content: freshData, timestamp: Date.now()}));
+  return freshData;
 }
 
-const main = async () => {
-  console.log('Fetching content from Reddit...');
-  const res = await r.getMe().getSavedContent()
-    .fetchAll({ skipReplies: true })
-    .filter((post) => !post.is_self)
-    .filter((post) => post.post_hint === 'rich:video')
+const exportSavedRedditPosts = async (type, amount) => {
+  const res = await getAllSavedPostWithCache()
+
+  const filtered = res.filter((post) => !post.is_self)
+    .filter((post) => post.post_hint === type)
     .filter((post) => !isAlreadyProcessed(post.url))
-    .slice(0,10)
-  //.map((post) => handlePost(post))
-    //.filter((result) => result);
-  for (const post of res) {
-    await handlePost(post)
+    .slice(20, amount);
+
+  printAmountSkipped()
+
+
+  console.log(`Processing ${filtered.length} posts`);
+  for (const post of filtered) {
+    await handlePost(post);
   }
-  //console.log(res);
-  //res.map((data) => {
-  //  console.log(data.post_hint);
-  //});
-  console.log(res.length);
+  console.log(`Handled ${filtered.length} posts`);
 };
 
-main();
+const type = 'image'
+const amount = 1;
+
+exportSavedRedditPosts(type, amount);
