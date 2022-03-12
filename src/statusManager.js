@@ -7,7 +7,7 @@ let amountSkipped = 0;
 let amountFailed = 0;
 
 const isAlreadyProcessed = (url) => {
-  if (filesDone[url])  {
+  if (filesDone[url]) {
     amountSkipped += 1;
     return true;
   }
@@ -19,9 +19,9 @@ const isAlreadyProcessed = (url) => {
 };
 
 const markAsFailed = (url, filename, reason) => {
-  filesFailed[url] = {filename, reason};
+  filesFailed[url] = { filename, reason };
   fs.writeFileSync('./resources/files_failed.json', JSON.stringify(filesFailed, null, 2));
-}
+};
 
 const markAsComplete = (url, filename) => {
   filesDone[url] = filename;
@@ -30,11 +30,11 @@ const markAsComplete = (url, filename) => {
 
 const printAmountSkipped = () => {
   console.log(`Skipped ${amountSkipped} (done) ${amountFailed} (failed) already processed files.`);
-}
+};
 
 module.exports = {
   markAsFailed,
   markAsComplete,
   isAlreadyProcessed,
-  printAmountSkipped
-}
+  printAmountSkipped,
+};
