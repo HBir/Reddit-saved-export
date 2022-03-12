@@ -18,7 +18,7 @@ const exportSavedRedditPosts = async (type, amount) => {
   const res = await getAllSavedPostWithCache()
 
   const filtered = res.filter((post) => !post.is_self)
-    .filter((post) => post.post_hint === type)
+    // .filter((post) => post.post_hint === type)
     .filter((post) => !isAlreadyProcessed(post.url))
     // .slice(0, amount);
 

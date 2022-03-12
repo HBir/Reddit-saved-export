@@ -20,12 +20,12 @@ const isAlreadyProcessed = (url) => {
 
 const markAsFailed = (url, filename, reason) => {
   filesFailed[url] = {filename, reason};
-  fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed, null, 2));
+  fs.writeFileSync('./resources/files_failed.json', JSON.stringify(filesFailed, null, 2));
 }
 
 const markAsComplete = (url, filename) => {
   filesDone[url] = filename;
-  fs.writeFileSync('files_done.json', JSON.stringify(filesDone, null, 2));
+  fs.writeFileSync('./resources/files_done.json', JSON.stringify(filesDone, null, 2));
 };
 
 const printAmountSkipped = () => {

@@ -16,9 +16,17 @@ const r = new Snoowrap({
   password,
 });
 
+const humanReadableMs = (ms) => {
+  const seconds=Math.floor((ms/1000)%60)
+  const minutes=Math.floor((ms/(1000*60))%60)
+  const hours=Math.floor((ms/(1000*60*60))%24)
+
+  return (hours ? `${hours} hours ` : '') + (minutes ? `${minutes} minutes ` : '') + (seconds ? `${seconds} seconds ` : '')
+}
+
 const getAllSavedPostWithCache = async () => {
   if (cache.content) {
-    console.log(`Using cache from ${Date.now() - cache.timestamp} ago. (${cache.content.length} posts)`);
+    console.log(`Using cache from ${humanReadableMs(Date.now() - cache.timestamp)} ago. (${cache.content.length} posts)`);
     return cache.content
   }
 
