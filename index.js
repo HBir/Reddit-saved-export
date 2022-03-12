@@ -1,9 +1,11 @@
 const Snoowrap = require('snoowrap');
 const fs = require('fs');
+const youtubedl = require('youtube-dl-exec');
+
 require('dotenv').config();
 
-// let filesDone = JSON.parse(fs.readFileSync('files_done.json'));
-const filesDone = require('./files_done.json');
+const filesDone = require('./files_done.json') || {};
+const filesFailed = require('./files_failed.json') || {};
 
 const {
   userAgent, clientId, clientSecret, username, password,
@@ -20,6 +22,7 @@ const r = new Snoowrap({
 const linuxSafeString = (string) => string.replaceAll(/[^a-zA-Z_0-9åäö\\-]/ig, '_');
 
 const getFileExtension = (string) => {
+  // eslint-disable-next-line prefer-regex-literals
   const regexp = new RegExp('\\/[^\\/]*\\.([^\\.\\/]*)$');
   return (string.match(regexp) || [])[1] || '';
 };
@@ -39,28 +42,42 @@ const formatPostData = (post) => {
 
   return {
     url: post.url,
-    // post_hint: post.post_hint,
+    post_hint: linuxSafeString(post.post_hint),
     filename,
   };
 };
 
-const handlePost = (post) => {
-  const postData = formatPostData(post);
-  if (filesDone[postData.url]) {
-    console.log(`File already downloaded, skipping: ${postData.url}`);
+const downloadFile = async (url, folder, filename) => youtubedl(url, {
+  output: `out/${folder}/${filename}`,
+}).then((output) => {
+  console.log(output);
+  markAsComplete(url, filename);
+})
+  .catch(() => {
+    filesFailed[url] = filename;
+    fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed));
+  });
+
+const handlePost = async (post) => {
+  if (filesDone[post.url]) {
+    console.log(`File already downloaded, skipping: ${post.url}`);
     return '';
   }
 
-  markAsComplete(postData.url, postData.filename);
+  const postData = formatPostData(post);
+
+  await downloadFile(postData.url, postData.post_hint, postData.filename);
+
   return postData;
 };
 
 const main = async () => {
   const res = await r.getMe().getSavedContent()
-    // .fetchAll({ skipReplies: true })
+    .fetchAll({ skipReplies: true })
     .filter((post) => !post.is_self)
     .filter((post) => post.post_hint === 'image')
-    .map((post) => handlePost(post));
+    .map((post) => handlePost(post))
+    .filter((result) => result);
 
   console.log(res);
   console.log(res.length);
