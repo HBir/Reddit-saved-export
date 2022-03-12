@@ -1,4 +1,4 @@
-const linuxSafeString = (string) => (string || 'undefined').replaceAll(/[^a-zA-Z_0-9åäö\\-]/ig, '_');
+const linuxSafeString = (string) => (string || 'undefined').replaceAll(/[^a-zA-Z_0-9åäö\\-]/ig, '_').replaceAll(/_+/g, '_');
 
 const getFileExtension = (string) => {
   // eslint-disable-next-line prefer-regex-literals

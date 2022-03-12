@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const filesDone = require('./files_done.json') || {};
-const filesFailed = require('./files_failed.json') || {};
+const filesDone = require('../resources/files_done.json');
+const filesFailed = require('../resources/files_failed.json');
 
 let amountSkipped = 0;
 let amountFailed = 0;
@@ -22,12 +22,12 @@ const isAlreadyProcessed = (url) => {
 
 const markAsFailed = (url, filename) => {
   filesFailed[url] = filename;
-  fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed));
+  fs.writeFileSync('files_failed.json', JSON.stringify(filesFailed, null, 2));
 }
 
 const markAsComplete = (url, filename) => {
   filesDone[url] = filename;
-  fs.writeFileSync('files_done.json', JSON.stringify(filesDone));
+  fs.writeFileSync('files_done.json', JSON.stringify(filesDone, null, 2));
 };
 
 const printAmountSkipped = () => {

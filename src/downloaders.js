@@ -15,8 +15,12 @@ const galleryDlDownloader = async (url, folder, filename) => {
     console.log(stdout);
     markAsComplete(url, filename);
   } catch(err) {
-    console.log(err);
-    markAsFailed(url, filename);
+    console.log(err.stderr);
+    if (err.stderr.includes('No suitable extractor')) {
+      youtubeDlDownload(url, folder, filename)
+    } else {
+      markAsFailed(url, filename);
+    }
   }
 }
 

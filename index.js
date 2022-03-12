@@ -1,59 +1,18 @@
-const Snoowrap = require('snoowrap');
-const fs = require('fs');
-const youtubedl = require('youtube-dl-exec');
-
 require('dotenv').config();
-const {
-  userAgent, clientId, clientSecret, username, password,
-} = process.env;
-
-const cache = require('./cache.json') || {};
 
 const {
   linuxSafeString,
   getFileExtension,
   formatPostData,
-} = require('./helpers');
-
-const {
-  isAlreadyProcessed,
-  printAmountSkipped
-} = require('./statusManager')
-
-const {
-  youtubeDlDownload,
-  galleryDlDownloader
-} = require('./downloaders')
-
-const r = new Snoowrap({
-  userAgent,
-  clientId,
-  clientSecret,
-  username,
-  password,
-});
-
-
+} = require('./src/helpers');
+const { isAlreadyProcessed, printAmountSkipped } = require('./src/statusManager')
+const { youtubeDlDownload, galleryDlDownloader } = require('./src/downloaders')
+const { getAllSavedPostWithCache } = require('./src/reddit-handler')
 
 const handlePost = async (post) => {
   const { url, post_hint, filename, extension } = formatPostData(post);
   await galleryDlDownloader(url, post_hint, filename, extension);
 };
-
-const getAllSavedPostWithCache = async () => {
-  if (cache.content) {
-    console.log(`Using cache from ${Date.now() - cache.timestamp} ago. (${cache.content.length} posts)`);
-    return cache.content
-  }
-
-  console.log('Fetching content from Reddit...');
-  const freshData = await r.getMe().getSavedContent()
-    .fetchAll({ skipReplies: true })
-
-  console.log(`Recieved ${freshData.length} posts`);
-  fs.writeFileSync('cache.json', JSON.stringify({content: freshData, timestamp: Date.now()}));
-  return freshData;
-}
 
 const exportSavedRedditPosts = async (type, amount) => {
   const res = await getAllSavedPostWithCache()
@@ -61,19 +20,20 @@ const exportSavedRedditPosts = async (type, amount) => {
   const filtered = res.filter((post) => !post.is_self)
     .filter((post) => post.post_hint === type)
     .filter((post) => !isAlreadyProcessed(post.url))
-    .slice(20, amount);
+    // .slice(0, amount);
 
   printAmountSkipped()
 
 
   console.log(`Processing ${filtered.length} posts`);
-  for (const post of filtered) {
+  for (const [i, post] of filtered.entries()) {
+    console.log(`${i+1}/${filtered.length}`);
     await handlePost(post);
   }
   console.log(`Handled ${filtered.length} posts`);
 };
 
-const type = 'image'
-const amount = 1;
+const TYPE = 'hosted:video'
+const AMOUNT = 20;
 
-exportSavedRedditPosts(type, amount);
+exportSavedRedditPosts(TYPE, AMOUNT);
