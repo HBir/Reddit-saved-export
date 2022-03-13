@@ -6,6 +6,12 @@ Stores in `resources/files_done.json` and `resources/files_failed.json` the stat
 
 Will not download already downloaded posts again, modify these files to retry.
 
+## Dependency
+
+Requires `gallery-dl` to be installed and in PATH
+
+Install instructions here: https://github.com/mikf/gallery-dl
+
 ## Setup
 
 Run `npm install` to set up the necessary files

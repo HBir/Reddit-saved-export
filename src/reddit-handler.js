@@ -19,13 +19,13 @@ const humanReadableMs = (ms) => {
   const seconds = Math.floor((ms / 1000) % 60);
   const minutes = Math.floor((ms / (1000 * 60)) % 60);
   const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-
   return (hours ? `${hours} hours ` : '') + (minutes ? `${minutes} minutes ` : '') + (seconds ? `${seconds} seconds ` : '');
 };
 
 const getAllSavedPostWithCache = async () => {
+  const oneHour = 3600000;
   const tsAge = Date.now() - cache.timestamp;
-  if (cache.content && tsAge < 86400000) {
+  if (cache.content && tsAge < oneHour) {
     console.log(`Using cache from ${humanReadableMs(tsAge)} ago. (${cache.content.length} posts)`);
     return cache.content;
   }

@@ -9,17 +9,19 @@ const {
 
 const youtubeDlDownload = async (url, folder, filename) => {
   console.log(`Downloading (youtube-dl) ${url} ${folder}/${filename}`);
-  return youtubedl(url, {
+  const options = {
     output: `out/${folder}/${filename}.%(ext)s`,
     playlistEnd: 1,
     addMetadata: true,
     format: 'best',
-  }).then((output) => {
+  };
+
+  return youtubedl(url, options).then((output) => {
     console.log('Finished downloading', output);
     markAsComplete(url, filename);
   }).catch((err) => {
-    console.log(err);
     console.log(`[ERROR] Failed to download ${url}`);
+    console.log(err);
     markAsFailed(url, filename, err.stderr);
   });
 };
@@ -33,13 +35,14 @@ const galleryDlDownloader = async (url, folder, filename) => {
     console.log(stdout);
     markAsComplete(url, filename);
   } catch (err) {
+    console.log(`[ERROR] Failed to download ${url}`);
     console.log(err.stderr);
     if ((err.stderr || '').includes('No suitable extractor')) {
       return youtubeDlDownload(url, folder, filename);
     }
     markAsFailed(url, filename, err.stderr);
   }
-  return true;
+  return Promise.resolve();
 };
 
 module.exports = {
