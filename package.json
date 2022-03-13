@@ -1,23 +1,27 @@
 {
   "name": "reddit-save-export",
   "version": "1.0.0",
-  "description": "",
+  "description": "Downloads the media of your saved reddit posts locally.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --recursive",
+    "lint": "eslint . --fix",
     "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && printf '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true && [ ! -s ./.env ] && printf 'userAgent=\nclientId=\nclientSecret=\nusername=\npassword=' > ./.env || true"
   },
-  "author": "",
+  "author": "Hannes Birgersson",
   "license": "ISC",
+  "repository": "github:HBir/Reddit-saved-export",
   "dependencies": {
     "dotenv": "^16.0.0",
     "snoowrap": "^1.23.0",
     "youtube-dl-exec": "^2.0.7"
   },
   "devDependencies": {
+    "chai": "^4.3.6",
     "eslint": "^8.11.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4"
+    "eslint-plugin-import": "^2.25.4",
+    "mocha": "^9.2.2"
   }
 }
