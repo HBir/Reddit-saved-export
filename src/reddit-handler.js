@@ -1,5 +1,4 @@
 const fs = require('fs');
-
 const Snoowrap = require('snoowrap');
 
 const cache = require('../resources/cache.json') || {};
@@ -25,8 +24,9 @@ const humanReadableMs = (ms) => {
 };
 
 const getAllSavedPostWithCache = async () => {
-  if (cache.content) {
-    console.log(`Using cache from ${humanReadableMs(Date.now() - cache.timestamp)} ago. (${cache.content.length} posts)`);
+  const tsAge = Date.now() - cache.timestamp
+  if (cache.content && tsAge < 86400000 ) {
+    console.log(`Using cache from ${humanReadableMs(tsAge)} ago. (${cache.content.length} posts)`);
     return cache.content;
   }
 

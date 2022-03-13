@@ -1,7 +1,8 @@
 .env
 files_done.json
-files_failed**.json
+files_failed.json
 node_modules
 out/**
 **.DS_Store
 cache.json
+**backup

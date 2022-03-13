@@ -2,8 +2,8 @@ const linuxSafeString = (string) => (string || 'undefined').replaceAll(/[^a-zA-Z
 
 const formatPostData = (post) => {
   const filename = `${linuxSafeString((post.author || {}).name || post.author)}_[`
-    + `${(post.subreddit || {}).display_name || post.subreddit}]_`
-    + `${linuxSafeString(post.title)}`;
+    + `${(post.subreddit || {}).display_name || post.subreddit}]_${
+      `${linuxSafeString(post.title)}`.substring(0, 145)}`;
 
   return {
     url: post.url,

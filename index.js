@@ -23,15 +23,13 @@ const exportSavedRedditPosts = async (type, amount) => {
 
   printAmountSkipped();
 
-  console.log(`Processing ${filtered.length} posts`);
   for (const [i, post] of filtered.entries()) {
     console.log(`${i + 1}/${filtered.length}`);
     await handlePost(post);
   }
-  console.log(`Handled ${filtered.length} posts`);
 };
 
-const TYPE = 'link';
-const AMOUNT = 2;
+// const TYPE = 'link';
+// const AMOUNT = 2;
 
 exportSavedRedditPosts(TYPE, AMOUNT);

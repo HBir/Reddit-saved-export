@@ -20,7 +20,7 @@ const youtubeDlDownload = async (url, folder, filename) => {
   }).catch((err) => {
     console.log(err);
     console.log(`[ERROR] Failed to download ${url}`);
-    markAsFailed(url, filename);
+    markAsFailed(url, filename, err.stderr);
   });
 };
 
@@ -28,7 +28,7 @@ const galleryDlDownloader = async (url, folder, filename) => {
   try {
     console.log(`Downloading (gallery-dl) ${url} ${folder}/${filename}`);
     const { stdout } = await exec(
-      `gallery-dl ${url} -D out/${folder} -f '${filename}{num\!S}.{extension}'`,
+      `gallery-dl ${url} -D out/${folder} -f '${filename}{num!S}.{extension}'`,
     );
     console.log(stdout);
     markAsComplete(url, filename);
@@ -39,6 +39,7 @@ const galleryDlDownloader = async (url, folder, filename) => {
     }
     markAsFailed(url, filename, err.stderr);
   }
+  return true;
 };
 
 module.exports = {
