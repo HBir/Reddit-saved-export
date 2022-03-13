@@ -24,8 +24,8 @@ const humanReadableMs = (ms) => {
 };
 
 const getAllSavedPostWithCache = async () => {
-  const tsAge = Date.now() - cache.timestamp
-  if (cache.content && tsAge < 86400000 ) {
+  const tsAge = Date.now() - cache.timestamp;
+  if (cache.content && tsAge < 86400000) {
     console.log(`Using cache from ${humanReadableMs(tsAge)} ago. (${cache.content.length} posts)`);
     return cache.content;
   }

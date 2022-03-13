@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && echo '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && echo '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && echo '{}' > ./resources/files_failed.json || true"
+    "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && printf '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true && [ ! -s ./.env ] && printf 'userAgent=\nclientId=\nclientSecret=\nusername=\npassword=' > ./.env || true"
   },
   "author": "",
   "license": "ISC",

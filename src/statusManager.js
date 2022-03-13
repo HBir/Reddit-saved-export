@@ -3,6 +3,7 @@ const fs = require('fs');
 const filesDone = require('../resources/files_done.json');
 const filesFailed = require('../resources/files_failed.json');
 
+// HACK: Not so nice, and can probably be solved a better way
 let amountSkipped = 0;
 let amountFailed = 0;
 
