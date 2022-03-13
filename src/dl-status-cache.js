@@ -3,7 +3,8 @@ const fs = require('fs');
 const filesDone = require('../resources/files_done.json');
 const filesFailed = require('../resources/files_failed.json');
 
-// HACK: Not so nice, and can probably be solved a better way
+// HACK: Not so nice, and can probably be solved a better way.
+// Works as long as it is only run from `npm start`
 let amountSkipped = 0;
 let amountFailed = 0;
 
@@ -29,7 +30,7 @@ const markAsComplete = (url, filename) => {
   fs.writeFileSync('./resources/files_done.json', JSON.stringify(filesDone, null, 2));
 };
 
-const printAmountSkipped = () => {
+const logAmountSkipped = () => {
   console.log(`Skipped ${amountSkipped} (done) ${amountFailed} (failed) already processed files.`);
 };
 
@@ -37,5 +38,5 @@ module.exports = {
   markAsFailed,
   markAsComplete,
   isAlreadyProcessed,
-  printAmountSkipped,
+  logAmountSkipped,
 };

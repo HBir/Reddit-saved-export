@@ -5,7 +5,7 @@ const youtubedl = require('youtube-dl-exec');
 const {
   markAsFailed,
   markAsComplete,
-} = require('./statusManager');
+} = require('./dl-status-cache');
 
 const youtubeDlDownload = async (url, folder, filename) => {
   console.log(`Downloading (youtube-dl) ${url} ${folder}/${filename}`);

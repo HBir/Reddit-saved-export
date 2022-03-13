@@ -2,6 +2,7 @@ const fs = require('fs');
 const Snoowrap = require('snoowrap');
 
 const cache = require('../resources/cache.json') || {};
+const { humanReadableMs } = require('./common-helpers');
 
 const {
   userAgent, clientId, clientSecret, username, password,
@@ -14,13 +15,6 @@ const r = new Snoowrap({
   username,
   password,
 });
-
-const humanReadableMs = (ms) => {
-  const seconds = Math.floor((ms / 1000) % 60);
-  const minutes = Math.floor((ms / (1000 * 60)) % 60);
-  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-  return (hours ? `${hours} hours ` : '') + (minutes ? `${minutes} minutes ` : '') + (seconds ? `${seconds} seconds ` : '');
-};
 
 const getAllSavedPostWithCache = async () => {
   const oneHour = 3600000;

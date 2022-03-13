@@ -12,7 +12,15 @@ const formatPostData = (post) => {
   };
 };
 
+const humanReadableMs = (ms) => {
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  return (hours ? `${hours} hours ` : '') + (minutes ? `${minutes} minutes ` : '') + (seconds ? `${seconds} seconds ` : '');
+};
+
 module.exports = {
   linuxSafeString,
   formatPostData,
+  humanReadableMs,
 };
