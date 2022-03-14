@@ -4,7 +4,7 @@ Downloads the media of your saved reddit posts locally.
 
 Stores in `resources/files_done.json` and `resources/files_failed.json` the status of already downloaded posts.
 
-Will not download already downloaded posts again, modify these files to retry.
+Will not download already attempted posts again, modify these files to retry.
 
 ## Dependency
 
@@ -27,7 +27,7 @@ password=
 
 ## Usage
 
-The following environent variables can be used on `npm start`:
+The following environment variables can be used on `npm start`:
 * `AMOUNT` Stop after processing this amount of posts
 * `TYPE` Only process this type of `post_hint` posts (example: `image`, `rich:video` ...)
 * `DRYRUN` Don't download any files

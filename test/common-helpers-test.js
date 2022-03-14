@@ -11,21 +11,21 @@ const {
 describe('common-helpers', () => {
   describe('#linuxSafeString()', () => {
     it('replaces linux unsafe characters with _', () => {
-      const somestring = 'a~b`c#d$e&f*g(h)i/j\\k|l[m]n{o}p;q\'r"s?t!v☠️w';
-      const safestring = linuxSafeString(somestring);
-      expect(safestring).to.eql('a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q_r_s_t_v_w');
+      const someString = 'a~b`c#d$e&f*g(h)i/j\\k|l[m]n{o}p;q\'r"s?t!v☠️w';
+      const safeString = linuxSafeString(someString);
+      expect(safeString).to.eql('a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q_r_s_t_v_w');
     });
 
     it('trims consecutive underscores', () => {
-      const somestring = 'a$()${}b${}c!';
-      const safestring = linuxSafeString(somestring);
-      expect(safestring).to.eql('a_b_c_');
+      const someString = 'a$()${}b${}c!';
+      const safeString = linuxSafeString(someString);
+      expect(safeString).to.eql('a_b_c_');
     });
 
     it('handles faulty values as the string "undefined"', () => {
-      const somestring = undefined;
-      const safestring = linuxSafeString(somestring);
-      expect(safestring).to.eql('undefined');
+      const someString = undefined;
+      const safeString = linuxSafeString(someString);
+      expect(safeString).to.eql('undefined');
     });
   });
 
