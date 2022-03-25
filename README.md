@@ -1,4 +1,4 @@
-# Reddit saved export
+# Reddit saved sync
 
 Downloads the media of your saved reddit posts locally.
 

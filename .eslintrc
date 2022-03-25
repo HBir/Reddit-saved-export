@@ -10,9 +10,8 @@
         "implicit-arrow-linebreak": 0,
         "max-len": ["error", { "code": 140 }],
         "no-await-in-loop": 0,
-        "no-restricted-syntax": 0,
-        "no-extend-native": 0
-    },
+        "no-restricted-syntax": 0
+      },
     "env": {
         "node": true,
         "mocha": true

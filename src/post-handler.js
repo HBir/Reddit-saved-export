@@ -14,18 +14,9 @@ const handlePost = async (post, dryrun) => {
   }
 };
 
-const filterByType = (filtertype, postHint) => {
-  if (!filtertype) {
-    return true;
-  }
-  return postHint === filtertype;
-};
+const filterByType = (postHint, filtertype) => !filtertype || postHint === filtertype;
 
-Array.prototype.limitPostAmount = function f(limitAmount) {
-  return limitAmount ? this.slice(0, limitAmount) : this;
-};
-
-const exportSavedRedditPosts = async (filtertype, limitAmount, dryrun) => {
+const syncSavedRedditPosts = async (filtertype, limitAmount, dryrun) => {
   const res = await getAllSavedPostWithCache();
   if (filtertype) {
     console.log(`[INFO] TYPE=${filtertype} - Only processing post_hint=${filtertype} posts`);
@@ -34,13 +25,13 @@ const exportSavedRedditPosts = async (filtertype, limitAmount, dryrun) => {
     console.log(`[INFO] AMOUNT=${limitAmount} - Stopping after ${limitAmount} posts processed`);
   }
   if (dryrun) {
-    console.log(`[INFO] DRYRUN=${dryrun} - Runnign in dry run mode`);
+    console.log(`[INFO] DRYRUN=${dryrun} - Running in dry run mode`);
   }
 
   const filtered = res.filter((post) => !post.is_self)
-    // .filter((post) => filterByType(post.post_hint, filtertype))
+    .filter((post) => filterByType(post.post_hint, filtertype))
     .filter((post) => !isAlreadyProcessed(post.url))
-    .limitPostAmount(limitAmount);
+    .slice(0, limitAmount);
 
   logAmountSkipped();
 
@@ -51,5 +42,5 @@ const exportSavedRedditPosts = async (filtertype, limitAmount, dryrun) => {
 };
 
 module.exports = {
-  exportSavedRedditPosts,
+  syncSavedRedditPosts,
 };
