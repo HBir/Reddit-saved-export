@@ -1,7 +1,6 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const Snoowrap = require('snoowrap');
 
-const cache = require('../resources/cache.json') || {};
 const { humanReadableMs } = require('./common-helpers');
 
 const {
@@ -16,9 +15,21 @@ const r = new Snoowrap({
   password,
 });
 
+const getCache = async () => {
+  try {
+    // eslint-disable-next-line import/no-unresolved
+    return require('../resources/cache.json');
+  } catch (err) {
+    console.log('[INFO] Cache file not found');
+    return {};
+  }
+};
+
 const getAllSavedPostWithCache = async () => {
+  const cache = await getCache();
+
   const oneHour = 3600000;
-  const tsAge = Date.now() - cache.timestamp;
+  const tsAge = Date.now() - cache.timestamp || 0;
   if (cache.content && tsAge < oneHour) {
     console.log(`Using cache from ${humanReadableMs(tsAge)} ago. (${cache.content.length} posts)`);
     return cache.content;
@@ -29,7 +40,7 @@ const getAllSavedPostWithCache = async () => {
     .fetchAll({ skipReplies: true });
 
   console.log(`Recieved ${freshData.length} posts`);
-  fs.writeFileSync('cache.json', JSON.stringify({ content: freshData, timestamp: Date.now() }));
+  await fs.writeFile('resources/cache.json', JSON.stringify({ content: freshData, timestamp: Date.now() }, null, 2));
   return freshData;
 };
 

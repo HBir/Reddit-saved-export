@@ -7,7 +7,11 @@
     "start": "node index.js",
     "test": "mocha --recursive",
     "lint": "eslint . --fix",
-    "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && printf '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true && [ ! -s ./.env ] && printf 'userAgent=\nclientId=\nclientSecret=\nusername=\npassword=' > ./.env || true"
+    "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && printf '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true && [ ! -s ./.env ] && printf 'userAgent=\nclientId=\nclientSecret=\nusername=\npassword=' > ./.env || true",
+    "postinstall": "gallery-dl > /dev/null || echo 'gallery-dl not installed'"
+  },
+  "engines": {
+    "node": ">16.0.0"
   },
   "author": "Hannes Birgersson",
   "license": "ISC",

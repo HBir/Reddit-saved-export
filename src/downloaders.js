@@ -8,7 +8,7 @@ const {
 } = require('./dl-status-cache');
 
 const youtubeDlDownload = async (url, folder, filename) => {
-  console.log(`Downloading (youtube-dl) ${url} ${folder}/${filename}`);
+  console.log(`\nDownloading (youtube-dl) ${url} ${folder}/${filename}`);
   const options = {
     output: `out/${folder}/${filename}.%(ext)s`,
     playlistEnd: 1,
@@ -18,34 +18,41 @@ const youtubeDlDownload = async (url, folder, filename) => {
 
   return youtubedl(url, options).then((output) => {
     console.log('Finished downloading', output);
-    markAsComplete(url, filename);
+    markAsComplete(url, filename, folder);
   }).catch((err) => {
-    console.log(`[ERROR] Failed to download ${url}`);
-    console.log(err);
-    markAsFailed(url, filename, err.stderr);
+    console.log(`[ERROR] (youtube-dl) Failed to download ${url} ${err.stderr}`);
+    markAsFailed(url, filename, folder, err.stderr);
   });
 };
 
 const galleryDlDownloader = async (url, folder, filename) => {
+  console.log(`Downloading (gallery-dl) ${url} ${folder}/${filename}`);
   try {
-    console.log(`Downloading (gallery-dl) ${url} ${folder}/${filename}`);
     const { stdout } = await exec(
       `gallery-dl ${url} -D out/${folder} -f '${filename}{num!S}.{extension}'`,
     );
     console.log(stdout);
-    markAsComplete(url, filename);
   } catch (err) {
-    console.log(`[ERROR] Failed to download ${url}`);
-    console.log(err.stderr);
-    if ((err.stderr || '').includes('No suitable extractor')) {
+    throw new Error(err);
+  }
+
+  markAsComplete(url, filename, folder);
+};
+
+const downloadFile = async (url, folder, filename) => {
+  try {
+    await galleryDlDownloader(url, folder, filename);
+  } catch (err) {
+    console.log(`[ERROR] (gallery-dl) Failed to download ${url}`);
+    if ((err.message || '').includes('No suitable extractor')) {
       return youtubeDlDownload(url, folder, filename);
     }
-    markAsFailed(url, filename, err.stderr);
+    console.log(err.message);
+    markAsFailed(url, filename, folder || 'undefined', err.message);
   }
   return Promise.resolve();
 };
 
 module.exports = {
-  youtubeDlDownload,
-  galleryDlDownloader,
+  downloadFile,
 };

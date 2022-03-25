@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const filesDone = require('../resources/files_done.json');
 const filesFailed = require('../resources/files_failed.json');
@@ -20,14 +20,16 @@ const isAlreadyProcessed = (url) => {
   return false;
 };
 
-const markAsFailed = (url, filename, reason) => {
-  filesFailed[url] = { filename, reason };
-  fs.writeFileSync('./resources/files_failed.json', JSON.stringify(filesFailed, null, 2));
+const markAsFailed = (url, filename, type, reason) => {
+  filesFailed[url] = {
+    filename, reason, type, timestamp: new Date().toLocaleString('se'),
+  };
+  return fs.writeFile('resources/files_failed.json', JSON.stringify(filesFailed, null, 2));
 };
 
-const markAsComplete = (url, filename) => {
-  filesDone[url] = filename;
-  fs.writeFileSync('./resources/files_done.json', JSON.stringify(filesDone, null, 2));
+const markAsComplete = (url, filename, type) => {
+  filesDone[url] = { filename, type, timestamp: new Date().toLocaleString('se') };
+  return fs.writeFile('resources/files_done.json', JSON.stringify(filesDone, null, 2));
 };
 
 const logAmountSkipped = () => {
