@@ -14,7 +14,7 @@ Install instructions here: https://github.com/mikf/gallery-dl
 
 ## Setup
 
-Run `npm install` to set up the necessary files
+Run `npm install -g .` to set up the necessary files
 
 Create a reddit application (https://www.reddit.com/prefs/apps/) and fill in `.env` with the following information.
 ```
@@ -23,13 +23,24 @@ clientId=
 clientSecret=
 username=
 password=
+
+REDDIT_CACHE_TTL=
+OUT_PATH=
 ```
 
 ## Usage
+```
+Usage: reddit [options]
 
-The following environment variables can be used on `npm start`:
-* `AMOUNT` Stop after processing this amount of posts
-* `TYPE` Only process this type of `post_hint` posts (example: `image`, `rich:video` ...)
-* `DRYRUN` Don't download any files
+CLI to sync reddit saved posts locally
 
-Example: `AMOUNT=10 TYPE=image DRYRUN=true npm start`
+Options:
+  -V, --version          output the version number
+  -t, --type <type>      Only process this type of `post_hint` posts (example: `image`, `rich:video` ...)
+  -a, --amount <number>  Stop after processing this amount of posts
+  -o, --output <path>    Folder to download files to. Default overwritten with env var OUT_PATH (default: "./out")
+  -d, --dryrun           Don't download any files
+  -n, --onlynumber       Output number of unsynced posts
+  -q, --quiet            Quiet logging.
+  -h, --help             display help for command
+```

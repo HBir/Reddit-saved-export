@@ -1,7 +1,11 @@
 const fs = require('fs').promises;
+const { dirname } = require('path');
+const { log } = require('./logger');
 
 const filesDone = require('../resources/files_done.json');
 const filesFailed = require('../resources/files_failed.json');
+
+const projectPath = dirname(require.main.filename);
 
 // HACK: Not so nice, and can probably be solved a better way.
 // Works as long as it is only run from `npm start`
@@ -24,16 +28,16 @@ const markAsFailed = (url, filename, type, reason) => {
   filesFailed[url] = {
     filename, reason, type, timestamp: new Date().toLocaleString('se'),
   };
-  return fs.writeFile('resources/files_failed.json', JSON.stringify(filesFailed, null, 2));
+  return fs.writeFile(`${projectPath}/resources/files_failed.json`, JSON.stringify(filesFailed, null, 2));
 };
 
 const markAsComplete = (url, filename, type) => {
   filesDone[url] = { filename, type, timestamp: new Date().toLocaleString('se') };
-  return fs.writeFile('resources/files_done.json', JSON.stringify(filesDone, null, 2));
+  return fs.writeFile(`${projectPath}/resources/files_done.json`, JSON.stringify(filesDone, null, 2));
 };
 
 const logAmountSkipped = () => {
-  console.log(`Skipped ${amountSkipped} (done) ${amountFailed} (failed) already processed files.`);
+  log(`Skipped ${amountSkipped} (done) ${amountFailed} (failed) already processed files.`);
 };
 
 module.exports = {

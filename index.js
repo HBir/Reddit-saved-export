@@ -1,16 +1,40 @@
 #!/usr/bin/env node
+const path = require('path').dirname(require.main.filename);
 
-require('dotenv').config();
+require('dotenv').config({ path: `${path}/.env` });
+const { Command } = require('commander');
+
+const redditSavedSync = new Command();
 
 const { syncSavedRedditPosts } = require('./src/post-handler');
+const { setLoggingMode } = require('./src/logger');
 
-// The following environment variables can be used on `npm start`:
-// * `AMOUNT` Stop after processing this amount of posts
-// * `TYPE` Only process this type of `post_hint` posts (example: `image`, `rich:video` ...)
-// * `DRYRUN` Don't download any files
-const { AMOUNT, TYPE, DRYRUN } = process.env;
+exports.reddit = syncSavedRedditPosts;
 
-const start = async () => syncSavedRedditPosts(TYPE, AMOUNT, DRYRUN);
+redditSavedSync
+  .version('1.0.0')
+  .description('CLI to sync reddit saved posts locally')
+  .usage('[options]')
+  .option('-t, --type <type>', 'Only process this type of `post_hint` posts (example: `image`, `rich:video` ...)')
+  .option('-a, --amount <number>', 'Stop after processing this amount of posts')
+  .option(
+    '-o, --output <path>',
+    'Folder to download files to. Default overwritten with env var OUT_PATH',
+    process.env.OUT_PATH || `${path}/out`,
+  )
+  .option('-d, --dryrun', 'Don\'t download any files')
+  .option('-n, --onlynumber', 'Output number of unsynced posts')
+  .option('-q, --quiet', 'Quiet logging.')
+  .parse(process.argv);
 
-// To be run from npm start
-start();
+const options = redditSavedSync.opts();
+
+setLoggingMode(options.quiet);
+
+syncSavedRedditPosts(
+  options.type,
+  options.amount,
+  options.dryrun,
+  options.onlynumber,
+  options.output,
+);
