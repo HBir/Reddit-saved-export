@@ -19,8 +19,8 @@ const getNbOccur = (arr, key) => arr.reduce((acc, curr) => ({ ...acc, [curr[key]
 
 const filterByType = (postHint, filtertype) => !filtertype || postHint === filtertype;
 
-const syncSavedRedditPosts = async (filtertype, limitAmount, dryrun, onlyNumber, output) => {
-  const res = await getAllSavedPostWithCache();
+const syncSavedRedditPosts = async (filtertype, limitAmount, dryrun, onlyNumber, force, output) => {
+  const res = await getAllSavedPostWithCache(force);
 
   const filtered = res.filter((post) => !post.is_self)
     .filter((post) => filterByType(post.post_hint, filtertype))

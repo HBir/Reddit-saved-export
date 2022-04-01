@@ -7,8 +7,8 @@
     "start": "node index.js",
     "test": "mocha --recursive",
     "lint": "eslint . --fix",
-    "preinstall": "mkdir -p out && mkdir -p resources && [ ! -s ./resources/cache.json ] && printf '{}' > ./resources/cache.json || true && [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true && [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true && [ ! -s ./.env ] && printf 'userAgent=\nclientId=\nclientSecret=\nusername=\npassword=' > ./.env || true",
-    "postinstall": "gallery-dl --version || echo 'gallery-dl not installed'"
+    "preinstall": "./preinstall.sh",
+    "postinstall": "gallery-dl --version || (echo 'gallery-dl not installed' && exit 1)"
   },
   "engines": {
     "node": ">16.0.0"

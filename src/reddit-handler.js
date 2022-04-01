@@ -97,12 +97,12 @@ const pruneKeys = (posts) => posts.map(({
   ...keep
 }) => keep);
 
-const getAllSavedPostWithCache = async () => {
+const getAllSavedPostWithCache = async (force) => {
   const cache = await getCache();
 
   const cacheTtl = process.env.REDDIT_CACHE_TTL || 3600000;
   const tsAge = Date.now() - cache.timestamp || 0;
-  if (cache.content && tsAge < cacheTtl) {
+  if (!force && cache.content && tsAge < cacheTtl) {
     log(`Using cache from ${humanReadableMs(tsAge)} ago. (${cache.content.length} posts)`);
     return cache.content;
   }

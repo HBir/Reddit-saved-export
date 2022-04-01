@@ -24,6 +24,7 @@ redditSavedSync
   )
   .option('-d, --dryrun', 'Don\'t download any files')
   .option('-n, --onlynumber', 'Output number of unsynced posts')
+  .option('-f, --force', 'Force fetch of new posts (Ignore cache)')
   .option('-q, --quiet', 'Quiet logging.')
   .parse(process.argv);
 
@@ -36,5 +37,6 @@ syncSavedRedditPosts(
   options.amount,
   options.dryrun,
   options.onlynumber,
+  options.force,
   options.output,
 );
