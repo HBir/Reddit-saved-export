@@ -13,9 +13,15 @@ const {
 describe('common-helpers', () => {
   describe('#linuxSafeString()', () => {
     it('replaces linux unsafe characters with _', () => {
-      const someString = 'a~b`c#d$e&f*g(h)i/j\\k|l[m]n{o}p;q\'r"s?t!v☠️w';
+      const someString = 'a~c#d$e&f*g(h)i/j\\k|l[m]n{o}p;s?t!v☠️w';
       const safeString = linuxSafeString(someString);
-      expect(safeString).to.eql('a_b_c_d_e_f_g_h_i_j_k_l_m_n_o_p_q_r_s_t_v_w');
+      expect(safeString).to.eql('a_c_d_e_f_g_h_i_j_k_l_m_n_o_p_s_t_v_w');
+    });
+
+    it('removes \'', () => {
+      const someString = '"i\'d like` to go"';
+      const safeString = linuxSafeString(someString);
+      expect(safeString).to.eql('id_like_to_go');
     });
 
     it('trims consecutive underscores', () => {

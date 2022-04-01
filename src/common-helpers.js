@@ -1,7 +1,10 @@
 const imageExtensions = require('image-extensions');
 const videoExtensions = require('video-extensions');
 
-const linuxSafeString = (string) => (string || 'undefined').replaceAll(/[^a-zA-Z_0-9åäö-]/ig, '_').replaceAll(/_+/g, '_');
+const linuxSafeString = (string) => (string || 'undefined')
+  .replaceAll(/['`"]/ig, '')
+  .replaceAll(/[^a-zA-Z_0-9åäö-]/ig, '_')
+  .replaceAll(/_+/g, '_');
 
 const getFileExtension = (string) => {
   const regexp = /\.((?:(?!\.)[A-Za-z0-9])*?)$/;
