@@ -64,6 +64,21 @@ const pruneKeys = (posts) => posts.map(({
   parent_whitelist_status,
   stickied,
   preview,
+  crosspost_parent_list,
+  media_metadata,
+  category,
+  link_flair_richtext,
+  selftext,
+  edited,
+  content_categories,
+  is_self,
+  visited,
+  removed_by,
+  can_gild,
+  view_count,
+  media_only,
+  author_is_blocked,
+  is_video,
   ...keep
 }) => ({ ...keep, preview: ((((preview || {}).images || [])[0] || {}).source || {}).url }));
 
