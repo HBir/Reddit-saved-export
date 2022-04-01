@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const path = require('path').dirname(require.main.filename);
 
 require('dotenv').config({ path: `${path}/.env` });
