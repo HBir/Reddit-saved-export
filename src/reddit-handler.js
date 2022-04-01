@@ -46,7 +46,7 @@ const getAllSavedPostWithCache = async (force) => {
 
   const prunedData = pruneKeys(freshData);
 
-  log(`Recieved ${freshData.length} posts`);
+  log(`Received ${freshData.length} posts`);
   await fs.writeFile(`${projectPath}/resources/cache.json`, JSON.stringify({ timestamp: Date.now(), content: prunedData }, null, 2));
   return freshData;
 };
