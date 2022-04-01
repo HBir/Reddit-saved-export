@@ -6,6 +6,8 @@ const {
   linuxSafeString,
   formatPostData,
   humanReadableMs,
+  getFileExtension,
+  remapHint,
 } = require('../src/common-helpers');
 
 describe('common-helpers', () => {
@@ -106,6 +108,70 @@ describe('common-helpers', () => {
       const ms = 7200000 + 120000 + 5555;
       const readable = humanReadableMs(ms);
       expect(readable).to.eql('2 hours 2 minutes 5 seconds');
+    });
+  });
+
+  describe('#getFileExtension()', () => {
+    it('gets file extension from url', () => {
+      const url = 'https://i.imgur.com/sometest.some.jpg';
+      const extension = getFileExtension(url);
+      expect(extension).to.eql('jpg');
+    });
+
+    it('gets file extension from url with numbers', () => {
+      const url = 'https://i.imgur.com/sometest.some.mp4';
+      const extension = getFileExtension(url);
+      expect(extension).to.eql('mp4');
+    });
+
+    it('gets no file extension if missing', () => {
+      const url = 'https://i.imgur.com/sometest';
+      const extension = getFileExtension(url);
+      expect(extension).to.eql('');
+    });
+  });
+
+  describe('#remapHint()', () => {
+    it('changes undefined hint with image extension to image hint', () => {
+      const postHint = 'undefined';
+      const extension = 'jpg';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql('image');
+    });
+
+    it('changes undefined hint with video extension to video hint', () => {
+      const postHint = 'undefined';
+      const extension = 'mp4';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql('video');
+    });
+
+    it('changes link hint with video extension to video hint', () => {
+      const postHint = 'link';
+      const extension = 'mp4';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql('video');
+    });
+
+    it('keeps hint for missing extension', () => {
+      const postHint = 'link';
+      const extension = '';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql(postHint);
+    });
+
+    it('keeps hint for unknown extension', () => {
+      const postHint = 'link';
+      const extension = 'aaa';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql(postHint);
+    });
+
+    it('keeps hint for known hint', () => {
+      const postHint = 'rich_video';
+      const extension = 'aaa';
+      const hint = remapHint(postHint, extension);
+      expect(hint).to.eql(postHint);
     });
   });
 });

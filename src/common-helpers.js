@@ -1,4 +1,26 @@
+const imageExtensions = require('image-extensions');
+const videoExtensions = require('video-extensions');
+
 const linuxSafeString = (string) => (string || 'undefined').replaceAll(/[^a-zA-Z_0-9åäö-]/ig, '_').replaceAll(/_+/g, '_');
+
+const getFileExtension = (string) => {
+  const regexp = /\.((?:(?!\.)[A-Za-z0-9])*?)$/;
+  return (string.match(regexp) || [])[1] || '';
+};
+
+const remapHint = (postHint, extension) => {
+  if (!['undefined', 'link'].includes(postHint)) {
+    return postHint;
+  }
+  if (imageExtensions.includes(extension)) {
+    return 'image';
+  }
+  if (videoExtensions.includes(extension)) {
+    return 'video';
+  }
+
+  return postHint;
+};
 
 const formatPostData = (post) => {
   if (!post.title || !post.url) {
@@ -8,9 +30,11 @@ const formatPostData = (post) => {
     + `${(post.subreddit || {}).display_name || post.subreddit}]_${
       `${linuxSafeString(post.title)}`.substring(0, 145)}`;
 
+  const extension = getFileExtension(post.url);
+  const postHint = remapHint(linuxSafeString(post.post_hint), extension);
   return {
     url: post.url,
-    postHint: linuxSafeString(post.post_hint),
+    postHint,
     filename,
   };
 };
@@ -26,4 +50,6 @@ module.exports = {
   linuxSafeString,
   formatPostData,
   humanReadableMs,
+  getFileExtension,
+  remapHint,
 };
