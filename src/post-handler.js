@@ -28,10 +28,12 @@ const syncSavedRedditPosts = async (filtertype, limitAmount, dryrun, onlyNumber,
     .slice(0, limitAmount);
 
   if (onlyNumber) {
-    logRes({
-      ...getNbOccur(filtered, 'post_hint'),
-      total: filtered.length,
-    });
+    if (filtered.length) {
+      logRes({
+        ...getNbOccur(filtered, 'post_hint'),
+        total: filtered.length,
+      });
+    }
     return;
   }
   logAmountSkipped();
