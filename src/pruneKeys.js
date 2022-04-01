@@ -65,6 +65,6 @@ const pruneKeys = (posts) => posts.map(({
   stickied,
   preview,
   ...keep
-}) => ({ ...keep, preview: preview.images[0].source.url }));
+}) => ({ ...keep, preview: ((((preview || {}).images || [])[0] || {}).source || {}).url }));
 
 module.exports = pruneKeys;
