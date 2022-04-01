@@ -19,3 +19,5 @@ mkdir -p ./resources
 [ ! -s ./resources/files_done.json ] && printf '{}' > ./resources/files_done.json || true
 [ ! -s ./resources/files_failed.json ] && printf '{}' > ./resources/files_failed.json || true
 [ ! -s ./.env ] && echo "$DEFALT_ENV" > ./.env || true
+
+chmod +x ./index.js
