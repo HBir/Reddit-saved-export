@@ -71,7 +71,6 @@ const pruneKeys = (posts) => posts.map(({
   selftext,
   edited,
   content_categories,
-  is_self,
   visited,
   removed_by,
   can_gild,
