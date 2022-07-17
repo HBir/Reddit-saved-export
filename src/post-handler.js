@@ -6,10 +6,10 @@ const { log, logRes } = require('./logger');
 
 const handlePost = async (post, dryrun, output) => {
   const {
-    url, postHint, filename,
+    url, postHint, filename, metadata,
   } = formatPostData(post);
   if (!dryrun) {
-    await downloadFile(url, postHint, filename, output);
+    await downloadFile(url, postHint, filename, metadata, output);
   } else {
     log('[DRYRUN]', url, postHint, filename);
   }

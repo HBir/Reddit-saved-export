@@ -29,8 +29,10 @@ const formatPostData = (post) => {
   if (!post.title || !post.url) {
     throw new Error('Invalid post: Missing title or url', post);
   }
-  const filename = `${linuxSafeString((post.author || {}).name || post.author)}_[`
-    + `${(post.subreddit || {}).display_name || post.subreddit}]_${
+  const author = (post.author || {}).name || post.author;
+  const subreddit = (post.subreddit || {}).display_name || post.subreddit;
+  const filename = `${linuxSafeString(author)}_[`
+    + `${subreddit}]_${
       `${linuxSafeString(post.title)}`.substring(0, 145)}`;
 
   const extension = getFileExtension(post.url);
@@ -39,6 +41,15 @@ const formatPostData = (post) => {
     url: post.url,
     postHint,
     filename,
+    metadata: {
+      reddit_url: `https://reddit.com${post.permalink}`,
+      author,
+      subreddit,
+      title: post.title,
+      score: post.score,
+      created: post.created,
+      num_comments: post.num_comments,
+    },
   };
 };
 

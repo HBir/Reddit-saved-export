@@ -26,11 +26,19 @@ const youtubeDlDownload = async (url, folder, filename, out) => {
   });
 };
 
-const galleryDlDownloader = async (url, folder, filename, out) => {
+const setMetadataOptions = (metadata) =>
+  Object.entries(metadata).map((key) => `-o 'extractor.keywords.${key[0]}=${key[1]}'`).join(' ');
+
+const galleryDlDownloader = async (url, folder, filename, metadata, out) => {
   log(`Downloading (gallery-dl) ${url} ${folder}/${filename}`);
+  log(metadata);
   try {
+    console.log(setMetadataOptions(metadata));
     const { stdout } = await exec(
-      `gallery-dl ${url} -D ${out}/${folder} -f '${filename}{num!S}.{extension}'`,
+      `gallery-dl ${url} -D ${out}/${folder} -f '${filename}{num!S}.{extension}' \
+      --write-metadata \
+      -o 'extractor.url-metadata=gdl_file_url' \
+      ${setMetadataOptions(metadata)}`,
     );
     log(stdout);
   } catch (err) {
@@ -40,14 +48,14 @@ const galleryDlDownloader = async (url, folder, filename, out) => {
   markAsComplete(url, filename, folder);
 };
 
-const downloadFile = async (url, folder, filename, out) => {
+const downloadFile = async (url, folder, filename, metadata, out) => {
   try {
-    await galleryDlDownloader(url, folder, filename, out);
+    await galleryDlDownloader(url, folder, filename, metadata, out);
   } catch (err) {
     log(`[ERROR] (gallery-dl) Failed to download ${url}`);
-    if ((err.message || '').includes('No suitable extractor')) {
-      return youtubeDlDownload(url, folder, filename, out);
-    }
+    // if ((err.message || '').includes('No suitable extractor')) {
+    //   return youtubeDlDownload(url, folder, filename, out);
+    // }
     log(err.message);
     markAsFailed(url, filename, folder || 'undefined', err.message);
   }
